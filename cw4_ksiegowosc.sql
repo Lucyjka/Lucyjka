@@ -1,3 +1,4 @@
+/*
 INSERT INTO ksiegowosc.pracownicy (id_pracownika, imie, nazwisko, adres, telefon)
 VALUES
 	(1, 'Margaret', 'Tatcher', 'Frankfurt', 556786934),
@@ -196,3 +197,91 @@ WHERE id_pracownika IN (
     JOIN ksiegowosc.pensje  ON wynagrodzenie.id_pensji = pensje.id_pensji
     WHERE pensje.kwota < 1200
 );
+
+
+
+ALTER TABLE ksiegowosc.pracownicy
+ALTER COLUMN telefon TYPE varchar(30);
+
+UPDATE ksiegowosc.pracownicy
+SET telefon = 
+    CASE 
+        WHEN id_pracownika = 1 THEN '556786934'
+        WHEN id_pracownika = 2 THEN '885946372'
+        WHEN id_pracownika = 3 THEN '675936102'
+        WHEN id_pracownika = 4 THEN '987345023'
+        WHEN id_pracownika = 5 THEN '456357239'
+        WHEN id_pracownika = 6 THEN '987564386'
+		WHEN id_pracownika = 7 THEN '987675463'
+        WHEN id_pracownika = 8 THEN '876958365'
+        WHEN id_pracownika = 9 THEN '456786934'
+        WHEN id_pracownika = 10 THEN '987967584'
+        ELSE telefon
+    END;
+
+UPDATE ksiegowosc.pracownicy
+SET telefon = '(+48) ' || telefon
+WHERE telefon IS NOT NULL;
+
+
+
+-- zadanie B
+
+SELECT *
+FROM ksiegowosc.pracownicy
+WHERE LENGTH(UPPER(nazwisko)) = (
+  SELECT MAX(LENGTH(UPPER(nazwisko)))
+  FROM ksiegowosc.pracownicy
+);
+
+
+SELECT 
+    p.id_pracownika, 
+    p.imie, 
+    p.nazwisko, 
+    p.adres, 
+    p.telefon,
+    MD5(CAST(pe.kwota AS TEXT)) AS zakodowana_kwota_pensji
+FROM 
+    ksiegowosc.pracownicy p
+JOIN 
+    ksiegowosc.wynagrodzenie w ON p.id_pracownika = w.id_pracownika
+JOIN 
+    ksiegowosc.pensje pe ON w.id_pensji = pe.id_pensji;
+
+
+SELECT 
+    p.id_pracownika, 
+    p.imie, 
+    p.nazwisko, 
+    pe.kwota AS "pensja",
+	pr.kwota AS "premia"
+FROM 
+    ksiegowosc.pracownicy p
+LEFT JOIN 
+    ksiegowosc.wynagrodzenie w ON p.id_pracownika = w.id_pracownika
+LEFT JOIN 
+    ksiegowosc.pensje pe ON w.id_pensji = pe.id_pensji
+LEFT JOIN 
+    ksiegowosc.premie pr ON w.id_premii = pr.id_premii;
+
+SELECT 
+	p.imie,
+	p.nazwisko,
+	w.data,
+	(pr.kwota + pe.kwota + ((g.liczba_godzin - 160) * 20)) AS "pensja_calkowita",
+	pe.kwota AS "pensja_podstawowa",
+	pr.kwota AS "premia",
+	(g.liczba_godzin - 160) * 20 AS "nadgodziny"
+FROM
+	ksiegowosc.pracownicy p
+INNER JOIN 
+	ksiegowosc.wynagrodzenie w ON p.id_pracownika = w.id_pracownika
+INNER JOIN 
+	ksiegowosc.pensje pe ON w.id_pensji = pe.id_pensji
+INNER JOIN 
+	ksiegowosc.premie pr ON w.id_premii = pr.id_premii
+INNER JOIN 
+	ksiegowosc.godziny g ON w.id_godziny = g.id_godziny
+WHERE p.id_pracownika = 1;
+*/
