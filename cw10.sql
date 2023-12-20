@@ -1,4 +1,4 @@
---a
+--1--
 BEGIN TRANSACTION;
 UPDATE AdventureWorks2022.Production.Product
 SET ListPrice = ListPrice * 1.1
@@ -6,20 +6,19 @@ WHERE ProductID = 680;
 COMMIT TRANSACTION;
 
 
---b
-BEGIN TRANSACTION;
-DELETE FROM AdventureWorks2022.Production.Product
-WHERE ProductID = 707;
-ROLLBACK TRANSACTION;
-
-
---c
+--2--
 BEGIN TRANSACTION;
 INSERT INTO AdventureWorks2022.Production.Product 
-VALUES (1000,'Olek Homa', 'NPC-123', 1, 1, 'Black', 100, 50, 10, 15, 'XXL', 10, 1, 'R', 'H', 'S', 1, 1, GETDATE(), NULL, NULL, NEWID(), GETDATE());
+VALUES (1000,'Sheyaa Bin Abraham Joseph', 'NPC-123', 1, 1, 'Black', 100, 50, 10, 15, 'XXL', 10, 1, 'R', 'H', 'S', 1, 1, GETDATE(), NULL, NULL, NEWID(), GETDATE());
 COMMIT TRANSACTION;
 
---d
+--3--
+BEGIN TRANSACTION;
+DELETE FROM AdventureWorks2022.Production.Product
+WHERE ProductID = 1000;
+ROLLBACK TRANSACTION;
+
+--4--
 BEGIN TRANSACTION;
 DECLARE @sum FLOAT;
 SELECT @sum = SUM(StandardCost) FROM AdventureWorks2022.Production.Product;
@@ -34,7 +33,7 @@ BEGIN
     ROLLBACK TRANSACTION;
 END
 
---e
+--5--
 
 BEGIN TRANSACTION;
 DECLARE @ProductNumber VARCHAR(25);
@@ -55,7 +54,7 @@ BEGIN
   PRINT 'The new product was added successfully. The transaction was committed.';
 END
 
---f
+--6--
 BEGIN TRANSACTION;
 
 UPDATE AdventureWorks2022.Sales.SalesOrderDetail
@@ -66,7 +65,7 @@ IF @@ERROR <> 0
     ROLLBACK TRANSACTION;
 ELSE
     COMMIT TRANSACTION;
---g
+--7--
 BEGIN TRANSACTION;
 
 WITH avg_cost AS (
